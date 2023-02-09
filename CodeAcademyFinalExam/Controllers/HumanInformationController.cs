@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Numerics;
+using System.Security.Claims;
 
 namespace CodeAcademyFinalExam.Controllers
 {
@@ -22,17 +23,39 @@ namespace CodeAcademyFinalExam.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "User")]
         [HttpPost]
-        public void PostItem(int userId, HumanInformationDto infoToAdd)
+        public void PostItem(HumanInformationDto infoToAdd)
         {
-            _humanInformation.AddNewUserToList(userId, infoToAdd);
+            var userIdStr = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            var useridInt = int.Parse(userIdStr);
+
+            _humanInformation.AddNewUserToList(useridInt, infoToAdd);
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "User")]
         [HttpPut]
-        public void UpdateItem([FromQuery] int id, [FromBody] HumanInformationDto human)
+        public void UpdateItem([FromBody] HumanInformationDto human)
         {
-            _humanInformation.UpdateUserById(id, human.Name,  human.Surname, human.PersonalCode, human.TelephoneNumber, human.Email );
+            var userIdStr = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            var useridInt = int.Parse(userIdStr);
+            _humanInformation.UpdateUserById(useridInt, human.Name,  human.Surname, human.PersonalCode, 
+                human.TelephoneNumber, human.Email, human.Address.City, human.Address.Street, 
+                human.Address.HouseNumber, human.Address.FlatNumber );
         }
-        
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "User")]
+        //[HttpGet]
+        //public void GetItem([FromBody] HumanInformationDto human)
+        //{
+        //    var userIdStr = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+        //    var useridInt = int.Parse(userIdStr);
+        //    _humanInformation.UpdateUserById(useridInt, human.Name, human.Surname, human.PersonalCode,
+        //        human.TelephoneNumber, human.Email, human.Address.City, human.Address.Street,
+        //        human.Address.HouseNumber, human.Address.FlatNumber);
+        //}
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "User")]
+        [HttpGet]
+        public List<AccountDto> GetAllAccounts()
+        {
+            return _humanInformation.GetAllAccounts();
+        }
     }
 }

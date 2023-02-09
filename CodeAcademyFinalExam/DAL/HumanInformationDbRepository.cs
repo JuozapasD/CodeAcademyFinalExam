@@ -1,4 +1,5 @@
 ﻿using CodeAcademyFinalExam.DTO;
+using Microsoft.EntityFrameworkCore;
 
 namespace CodeAcademyFinalExam.DAL
 {
@@ -12,10 +13,13 @@ namespace CodeAcademyFinalExam.DAL
         {
             _context = context;
         }
-        public void AddNewUserToList(int accId, HumanInformationDto HumanDto) // cia i param turi ateiti account ID
+        public void AddNewUserToList(int id, HumanInformationDto HumanDto)
         {
 
-            var userFromDb = _context.Accounts.FirstOrDefault(i => i.Id == accId);
+            var userFromDb = _context.Accounts.FirstOrDefault(i => i.Id == id);
+            //var accountFromDb = _context.Accounts.FirstOrDefault(a => a.Id == userFromDb.HumanInformationId);
+            //accountFromDb.HumanInformationId = userFromDb.HumanInformationId;
+
             userFromDb.HumanInformation = new HumanInformation
             {
                 Name = HumanDto.Name,
@@ -31,16 +35,35 @@ namespace CodeAcademyFinalExam.DAL
 
         }
 
-        public void UpdateUserById(int id, string name, string surname, string personalCode, string phone, string email)
+        public void UpdateUserById(int accId, string name, string surname,
+            string personalCode, string phone, string email,
+            string city, string street, string houseNumber, string flatNumber)
         {
-            var userFromDb = _context.HumanInformation.FirstOrDefault(i => i.AddressId == id);
-            userFromDb.Name = name;
-            userFromDb.Surname = surname;
-            userFromDb.PersonalCode = personalCode;
-            userFromDb.TelephoneNumber = phone;
-            userFromDb.Email = email;
-     
+            var userFromDb = _context.Accounts.Include(b => b.HumanInformation).ThenInclude(b => b.Address).FirstOrDefault(i => i.Id == accId);
+            userFromDb.HumanInformation.Name = name;
+            userFromDb.HumanInformation.Surname = surname;
+            userFromDb.HumanInformation.PersonalCode = personalCode;
+            userFromDb.HumanInformation.TelephoneNumber = phone;
+            userFromDb.HumanInformation.Email = email;
+
+            userFromDb.HumanInformation.Address.City = city;
+            userFromDb.HumanInformation.Address.Street = street;
+            userFromDb.HumanInformation.Address.HouseNumber = houseNumber;
+            userFromDb.HumanInformation.Address.FlatNumber = flatNumber;
+
+            //var accountFromDb = _context.Accounts.FirstOrDefault(a => a.HumanInformationId == userFromDb.HumanInformationId);
+           // accountFromDb.HumanInformationId = userFromDb.HumanInformationId;
             _context.SaveChanges();
         }
+        public List<AccountDto> GetAllAccounts()
+        {
+            return _context.Accounts.Select(x => new AccountDto
+            {
+                Username = x.Username,
+                Role = x.Role,
+            }).ToList();
+        }
+
+
     }
 }
