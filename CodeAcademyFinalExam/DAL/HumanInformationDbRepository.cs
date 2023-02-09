@@ -64,6 +64,10 @@ namespace CodeAcademyFinalExam.DAL
             }).ToList();
         }
 
-
+        public void DeleteUserById(int id)
+        {
+            _context.Accounts.Remove(new Account { Id = id });
+            _context.SaveChanges(true);
+        }
     }
 }

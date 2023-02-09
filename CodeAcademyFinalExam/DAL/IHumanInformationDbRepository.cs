@@ -9,6 +9,7 @@ namespace CodeAcademyFinalExam.DAL
             string personalCode, string phone, string email,
             string city, string street, string houseNumber, string flatNumber);
         public List<AccountDto> GetAllAccounts();
+        public void DeleteUserById(int id);
 
 
     }
