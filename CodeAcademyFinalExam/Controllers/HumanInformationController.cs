@@ -10,7 +10,7 @@ using System.Security.Claims;
 
 namespace CodeAcademyFinalExam.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/")]
     [ApiController]
     public class HumanInformationController : ControllerBase
     {
@@ -23,6 +23,7 @@ namespace CodeAcademyFinalExam.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "User, Admin")]
         [HttpPost]
+        [Route("add-user-information")]
         public IActionResult PostItem(HumanInformationDto infoToAdd)
         {
             if (!ModelState.IsValid)
@@ -39,6 +40,7 @@ namespace CodeAcademyFinalExam.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "User, Admin")]
         [HttpPut]
+        [Route("update-uUser-information")]
         public IActionResult UpdateItem([FromBody] HumanInformationDto human)
         {
             if (!ModelState.IsValid)
@@ -63,7 +65,7 @@ namespace CodeAcademyFinalExam.Controllers
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
-        [HttpGet("GetAllUserInformation")]
+        [HttpGet("get-all-users-information")]
         public IActionResult GetAllUserInformation()
         {
             var allUserInfo = _humanInformation.GetAllUserInfo();
@@ -71,7 +73,7 @@ namespace CodeAcademyFinalExam.Controllers
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "User, Admin")]
-        [HttpGet("user")]
+        [HttpGet("{id}")]
         public IActionResult GetUserInformation()
         {
             var userIdStr = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
@@ -81,7 +83,7 @@ namespace CodeAcademyFinalExam.Controllers
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "User, Admin")]
-        [HttpGet("GetAllAccounts")]
+        [HttpGet("get-all-accounts")]
         public List<AccountInfoDto> GetAllAccounts()
         {
             return _humanInformation.GetAllAccounts();
