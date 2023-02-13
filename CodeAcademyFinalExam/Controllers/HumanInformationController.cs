@@ -42,8 +42,8 @@ namespace CodeAcademyFinalExam.Controllers
                 human.Address.HouseNumber, human.Address.FlatNumber );
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "User, Admin")]
-        [HttpGet]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [HttpGet("GetAllAccounts")]
         public List<AccountDto> GetAllAccounts()
         {
             return _humanInformation.GetAllAccounts();
@@ -54,6 +54,24 @@ namespace CodeAcademyFinalExam.Controllers
         public void Delete(int id)
         {
             _humanInformation.DeleteUserById(id);
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [HttpGet("GetAllUserInformation")]
+        public IActionResult GetAllUserInformation()
+        {
+            var allUserInfo = _humanInformation.GetAllUserInfo();
+            return Ok(allUserInfo);
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "User, Admin")]
+        [HttpGet("user")]
+        public IActionResult GetUserInformation()
+        {
+            var userIdStr = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            var useridInt = int.Parse(userIdStr);
+            var userInfo = _humanInformation.GetUserInformationById(useridInt);
+            return Ok(userInfo);
         }
     }
 }

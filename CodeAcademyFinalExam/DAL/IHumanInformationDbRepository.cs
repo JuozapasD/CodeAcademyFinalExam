@@ -11,6 +11,9 @@ namespace CodeAcademyFinalExam.DAL
         public List<AccountDto> GetAllAccounts();
         public void DeleteUserById(int id);
 
+        public IEnumerable<AccountDto> GetAllUserInfo();
+
+        public AccountDto GetUserInformationById(int userId);
 
     }
 }

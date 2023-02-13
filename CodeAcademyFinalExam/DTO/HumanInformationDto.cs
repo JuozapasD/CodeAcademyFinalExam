@@ -10,8 +10,7 @@ namespace CodeAcademyFinalExam.DTO
         public string PersonalCode { get; set; }
         public string TelephoneNumber { get; set; }
         public string Email { get; set; }
-        public int AddressId { get; set; }
-
-        public Address Address { get; set; }
+        
+        public AddressDto Address { get; set; }
     }
 }

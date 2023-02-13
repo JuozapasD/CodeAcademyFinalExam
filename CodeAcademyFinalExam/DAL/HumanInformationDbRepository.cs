@@ -27,7 +27,13 @@ namespace CodeAcademyFinalExam.DAL
                 PersonalCode = HumanDto.PersonalCode,
                 TelephoneNumber = HumanDto.TelephoneNumber,
                 Email = HumanDto.Email,
-                Address = HumanDto.Address,
+                Address = new Address
+                {
+                    City = HumanDto.Address.City,
+                    Street = HumanDto.Address.Street,
+                    HouseNumber = HumanDto.Address.HouseNumber,
+                    FlatNumber = HumanDto.Address.FlatNumber,
+                },
             };
 
 
@@ -69,5 +75,79 @@ namespace CodeAcademyFinalExam.DAL
             _context.Accounts.Remove(new Account { Id = id });
             _context.SaveChanges(true);
         }
+
+        public IEnumerable<AccountDto> GetAllUserInfo()
+        {
+            var accounts = _context.Accounts.Include(b => b.HumanInformation).ThenInclude(b => b.Address).ToList();
+            List<AccountDto> accountDtos = new List<AccountDto>();
+            foreach (var acc in accounts)
+            {
+                var humanInfo = acc.HumanInformation;
+                var address = humanInfo.Address;
+                var accountDto = new AccountDto
+                {
+                    Username = acc.Username,
+                    Role = acc.Role,
+                    HumanInformation = new HumanInformationDto
+                    {
+                        Name = humanInfo.Name,
+                        Surname = humanInfo.Surname,
+                        PersonalCode = humanInfo.PersonalCode,
+                        TelephoneNumber = humanInfo.TelephoneNumber,
+                        Email = humanInfo.Email,
+                        Address = new AddressDto
+                        {
+                            City = address.City,
+                            Street = address.Street,
+                            HouseNumber = address.HouseNumber,
+                            FlatNumber = address.FlatNumber
+                        }
+                    }
+                };
+                accountDtos.Add(accountDto);
+            }
+
+            return accountDtos;
+        }
+
+        public AccountDto GetUserInformationById(int userId)
+        {
+            var account = _context.Accounts
+                .Include(b => b.HumanInformation)
+                .ThenInclude(b => b.Address)
+                .FirstOrDefault(a => a.Id == userId);
+
+            if (account == null)
+            {
+                return null;
+            }
+
+            var humanInfo = account.HumanInformation;
+            var address = humanInfo.Address;
+            var accountDto = new AccountDto
+            {
+                Username = account.Username,
+                Role = account.Role,
+                HumanInformation = new HumanInformationDto
+                {
+                    Name = humanInfo.Name,
+                    Surname = humanInfo.Surname,
+                    PersonalCode = humanInfo.PersonalCode,
+                    TelephoneNumber = humanInfo.TelephoneNumber,
+                    Email = humanInfo.Email,
+                    Address = new AddressDto
+                    {
+                        City = address.City,
+                        Street = address.Street,
+                        HouseNumber = address.HouseNumber,
+                        FlatNumber = address.FlatNumber
+                    }
+                }
+            };
+
+            return accountDto;
+        }
+
+
     }
 }
