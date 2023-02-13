@@ -23,30 +23,36 @@ namespace CodeAcademyFinalExam.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "User, Admin")]
         [HttpPost]
-        public void PostItem(HumanInformationDto infoToAdd)
+        public IActionResult PostItem(HumanInformationDto infoToAdd)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var userIdStr = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
             var useridInt = int.Parse(userIdStr);
 
             _humanInformation.AddNewUserToList(useridInt, infoToAdd);
+            return Ok();
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "User, Admin")]
         [HttpPut]
-        public void UpdateItem([FromBody] HumanInformationDto human)
+        public IActionResult UpdateItem([FromBody] HumanInformationDto human)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var userIdStr = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
             var useridInt = int.Parse(userIdStr);
-            _humanInformation.UpdateUserById(useridInt, human.Name,  human.Surname, human.PersonalCode, 
-                human.TelephoneNumber, human.Email, human.Address.City, human.Address.Street, 
-                human.Address.HouseNumber, human.Address.FlatNumber );
-        }
+            _humanInformation.UpdateUserById(useridInt, human.Name, human.Surname, human.PersonalCode,
+                human.TelephoneNumber, human.Email, human.Address.City, human.Address.Street,
+                human.Address.HouseNumber, human.Address.FlatNumber);
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
-        [HttpGet("GetAllAccounts")]
-        public List<AccountDto> GetAllAccounts()
-        {
-            return _humanInformation.GetAllAccounts();
+            return Ok();
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
@@ -72,6 +78,13 @@ namespace CodeAcademyFinalExam.Controllers
             var useridInt = int.Parse(userIdStr);
             var userInfo = _humanInformation.GetUserInformationById(useridInt);
             return Ok(userInfo);
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "User, Admin")]
+        [HttpGet("GetAllAccounts")]
+        public List<AccountInfoDto> GetAllAccounts()
+        {
+            return _humanInformation.GetAllAccounts();
         }
     }
 }

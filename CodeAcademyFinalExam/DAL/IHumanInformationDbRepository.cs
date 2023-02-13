@@ -8,7 +8,7 @@ namespace CodeAcademyFinalExam.DAL
         void UpdateUserById(int id, string name, string surname,
             string personalCode, string phone, string email,
             string city, string street, string houseNumber, string flatNumber);
-        public List<AccountDto> GetAllAccounts();
+        public List<AccountInfoDto> GetAllAccounts();
         public void DeleteUserById(int id);
 
         public IEnumerable<AccountDto> GetAllUserInfo();

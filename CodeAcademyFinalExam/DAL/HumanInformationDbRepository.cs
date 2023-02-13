@@ -61,9 +61,9 @@ namespace CodeAcademyFinalExam.DAL
            // accountFromDb.HumanInformationId = userFromDb.HumanInformationId;
             _context.SaveChanges();
         }
-        public List<AccountDto> GetAllAccounts()
+        public List<AccountInfoDto> GetAllAccounts()
         {
-            return _context.Accounts.Select(x => new AccountDto
+            return _context.Accounts.Select(x => new AccountInfoDto
             {
                 Username = x.Username,
                 Role = x.Role,
@@ -82,29 +82,63 @@ namespace CodeAcademyFinalExam.DAL
             List<AccountDto> accountDtos = new List<AccountDto>();
             foreach (var acc in accounts)
             {
-                var humanInfo = acc.HumanInformation;
-                var address = humanInfo.Address;
-                var accountDto = new AccountDto
+                if (acc.HumanInformation != null)
                 {
-                    Username = acc.Username,
-                    Role = acc.Role,
-                    HumanInformation = new HumanInformationDto
+                    var humanInfo = acc.HumanInformation;
+                    if (humanInfo.Address != null)
                     {
-                        Name = humanInfo.Name,
-                        Surname = humanInfo.Surname,
-                        PersonalCode = humanInfo.PersonalCode,
-                        TelephoneNumber = humanInfo.TelephoneNumber,
-                        Email = humanInfo.Email,
-                        Address = new AddressDto
+                        var address = humanInfo.Address;
+                        var accountDto = new AccountDto
                         {
-                            City = address.City,
-                            Street = address.Street,
-                            HouseNumber = address.HouseNumber,
-                            FlatNumber = address.FlatNumber
-                        }
+                            Username = acc.Username,
+                            Role = acc.Role,
+                            HumanInformation = new HumanInformationDto
+                            {
+                                Name = humanInfo.Name,
+                                Surname = humanInfo.Surname,
+                                PersonalCode = humanInfo.PersonalCode,
+                                TelephoneNumber = humanInfo.TelephoneNumber,
+                                Email = humanInfo.Email,
+                                Address = new AddressDto
+                                {
+                                    City = address.City,
+                                    Street = address.Street,
+                                    HouseNumber = address.HouseNumber,
+                                    FlatNumber = address.FlatNumber
+                                }
+                            }
+                        };
+                        accountDtos.Add(accountDto);
                     }
-                };
-                accountDtos.Add(accountDto);
+                    else
+                    {
+                        var accountDto = new AccountDto
+                        {
+                            Username = acc.Username,
+                            Role = acc.Role,
+                            HumanInformation = new HumanInformationDto
+                            {
+                                Name = humanInfo.Name,
+                                Surname = humanInfo.Surname,
+                                PersonalCode = humanInfo.PersonalCode,
+                                TelephoneNumber = humanInfo.TelephoneNumber,
+                                Email = humanInfo.Email,
+                                Address = null
+                            }
+                        };
+                        accountDtos.Add(accountDto);
+                    }
+                }
+                else
+                {
+                    var accountDto = new AccountDto
+                    {
+                        Username = acc.Username,
+                        Role = acc.Role,
+                        HumanInformation = null
+                    };
+                    accountDtos.Add(accountDto);
+                }
             }
 
             return accountDtos;
