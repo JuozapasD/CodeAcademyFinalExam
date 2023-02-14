@@ -20,17 +20,23 @@ namespace CodeAcademyFinalExam.Controllers
         [HttpPost("SignUp")]
         public ActionResult SignUp([FromBody] AuthRequestDto request)
         {
-            _accountsService.SignupNewAccount(request.UserName, request.Password);
-            return Ok();
+            try
+            {
+                _accountsService.SignupNewAccount(request.UserName, request.Password);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Toks vartotojo vardas jau užimtas");
+            }
         }
-
         [HttpPost("Login")]
         public ActionResult Login([FromBody] AuthRequestDto request)
         {
             var (loginSuccess, account) = _accountsService.Login(request.UserName, request.Password);
             if (!loginSuccess)
             {
-                return BadRequest("Invalid username or password");
+                return BadRequest("Neteisingas vartotojo vardas arba slaptažodis");
             }
             else
             {

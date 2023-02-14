@@ -1,4 +1,5 @@
 ﻿using CodeAcademyFinalExam.DAL;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -7,10 +8,12 @@ namespace CodeAcademyFinalExam.BLL
     public class AccountService : IAccountService
     {
         private readonly IJwtRepository _jwtRepository;
+        private readonly AccountsRegistrationDbContext _context;
 
-        public AccountService(IJwtRepository jwtRepository)
+        public AccountService(IJwtRepository jwtRepository, AccountsRegistrationDbContext context)
         {
             _jwtRepository = jwtRepository;
+            _context = context;
         }
 
         public (bool, Account) Login(string username, string password)
@@ -33,6 +36,10 @@ namespace CodeAcademyFinalExam.BLL
 
         public Account SignupNewAccount(string username, string password)
         {
+            if (_context.DoesUserExist(username))
+            {
+                throw new Exception("Username already in use");
+            }
             var account = CreateAccount(username, password);
             _jwtRepository.SaveAccount(account);
             return account;
@@ -66,6 +73,7 @@ namespace CodeAcademyFinalExam.BLL
             var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
             return computedHash.SequenceEqual(passwordHash);
         }
+
     }
 }
 

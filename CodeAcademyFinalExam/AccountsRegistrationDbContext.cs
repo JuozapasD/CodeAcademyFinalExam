@@ -14,5 +14,9 @@ namespace CodeAcademyFinalExam
         {
 
         }
+        public bool DoesUserExist(string username)
+        {
+            return Accounts.Any(a => a.Username == username);
+        }
     }
 }

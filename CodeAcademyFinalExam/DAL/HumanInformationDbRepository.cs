@@ -45,20 +45,32 @@ namespace CodeAcademyFinalExam.DAL
             string personalCode, string phone, string email,
             string city, string street, string houseNumber, string flatNumber)
         {
-            var userFromDb = _context.Accounts.Include(b => b.HumanInformation).ThenInclude(b => b.Address).FirstOrDefault(i => i.Id == accId);
+            var userFromDb = _context.Accounts
+                .Include(b => b.HumanInformation)
+                .ThenInclude(b => b.Address)
+                .FirstOrDefault(i => i.Id == accId);
+
+            if (userFromDb.HumanInformation == null)
+            {
+                userFromDb.HumanInformation = new HumanInformation();
+            }
+
             userFromDb.HumanInformation.Name = name;
             userFromDb.HumanInformation.Surname = surname;
             userFromDb.HumanInformation.PersonalCode = personalCode;
             userFromDb.HumanInformation.TelephoneNumber = phone;
             userFromDb.HumanInformation.Email = email;
 
+            if (userFromDb.HumanInformation.Address == null)
+            {
+                userFromDb.HumanInformation.Address = new Address();
+            }
+
             userFromDb.HumanInformation.Address.City = city;
             userFromDb.HumanInformation.Address.Street = street;
             userFromDb.HumanInformation.Address.HouseNumber = houseNumber;
             userFromDb.HumanInformation.Address.FlatNumber = flatNumber;
 
-            //var accountFromDb = _context.Accounts.FirstOrDefault(a => a.HumanInformationId == userFromDb.HumanInformationId);
-           // accountFromDb.HumanInformationId = userFromDb.HumanInformationId;
             _context.SaveChanges();
         }
         public List<AccountInfoDto> GetAllAccounts()
@@ -157,30 +169,39 @@ namespace CodeAcademyFinalExam.DAL
             }
 
             var humanInfo = account.HumanInformation;
-            var address = humanInfo.Address;
+            var address = humanInfo?.Address;
             var accountDto = new AccountDto
             {
                 Username = account.Username,
-                Role = account.Role,
-                HumanInformation = new HumanInformationDto
+                Role = account.Role
+            };
+            if (humanInfo != null)
+            {
+                accountDto.HumanInformation = new HumanInformationDto
                 {
                     Name = humanInfo.Name,
                     Surname = humanInfo.Surname,
                     PersonalCode = humanInfo.PersonalCode,
                     TelephoneNumber = humanInfo.TelephoneNumber,
-                    Email = humanInfo.Email,
-                    Address = new AddressDto
-                    {
-                        City = address.City,
-                        Street = address.Street,
-                        HouseNumber = address.HouseNumber,
-                        FlatNumber = address.FlatNumber
-                    }
-                }
-            };
+                    Email = humanInfo.Email
+                };
+            }
+            if (address != null)
+            {
+                accountDto.Address = new AddressDto
+                {
+                    City = address.City,
+                    Street = address.Street,
+                    HouseNumber = address.HouseNumber,
+                    FlatNumber = address.FlatNumber
+                };
+            }
 
             return accountDto;
         }
+
+
+
 
 
     }

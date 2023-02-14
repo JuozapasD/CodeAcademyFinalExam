@@ -40,7 +40,7 @@ namespace CodeAcademyFinalExam.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "User, Admin")]
         [HttpPut]
-        [Route("update-uUser-information")]
+        [Route("update-user-information")]
         public IActionResult UpdateItem([FromBody] HumanInformationDto human)
         {
             if (!ModelState.IsValid)
@@ -73,10 +73,15 @@ namespace CodeAcademyFinalExam.Controllers
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "User, Admin")]
-        [HttpGet("{id}")]
+        [HttpGet("user-information")]
         public IActionResult GetUserInformation()
         {
-            var userIdStr = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            var userIdStr = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdStr))
+            {
+                return BadRequest("User ID not found in authentication token.");
+            }
+
             var useridInt = int.Parse(userIdStr);
             var userInfo = _humanInformation.GetUserInformationById(useridInt);
             return Ok(userInfo);
