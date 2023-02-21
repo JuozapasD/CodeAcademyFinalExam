@@ -69,7 +69,7 @@ namespace CodeAcademyFinalExam.DAL
             userFromDb.HumanInformation.Address.City = city;
             userFromDb.HumanInformation.Address.Street = street;
             userFromDb.HumanInformation.Address.HouseNumber = houseNumber;
-            userFromDb.HumanInformation.Address.FlatNumber = flatNumber;
+            userFromDb.HumanInformation.Address.FlatNumber = string.IsNullOrEmpty(flatNumber) ? null : flatNumber;
 
             _context.SaveChanges();
         }

@@ -4,6 +4,7 @@ using CodeAcademyFinalExam;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CodeAcademyFinalExam.Migrations
 {
     [DbContext(typeof(AccountsRegistrationDbContext))]
-    partial class AccountsRegistrationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230221174815_Added-Nullable-Address")]
+    partial class AddedNullableAddress
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
